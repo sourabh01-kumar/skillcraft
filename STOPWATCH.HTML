@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stopwatch - Comillas Negras</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      
+      background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: white;
+    }
+
+    .circle {
+      width: 300px;
+      height: 150px;
+      background: radial-gradient(circle at bottom, #00c6ff, #0072ff);
+      border-top-left-radius: 150px;
+      border-top-right-radius: 150px;
+      position: relative;
+      top: 0;
+    }
+
+    .stopwatch-container {
+      background: #1c1c1c;
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      margin-top: -50px;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    .timer {
+      font-size: 3rem;
+      margin: 20px 0;
+      letter-spacing: 2px;
+    }
+
+    .controls button {
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .controls button:hover {
+      background: #005dc1;
+    }
+
+    .laps {
+      margin-top: 20px;
+      max-height: 150px;
+      overflow-y: auto;
+      text-align: left;
+    }
+
+    .laps li {
+      font-size: 1rem;
+      border-bottom: 1px solid #444;
+      padding: 5px 0;
+    }
+
+    @media (max-width: 500px) {
+      .circle {
+        width: 100%;
+        border-radius: 0;
+      }
+
+      .stopwatch-container {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="circle"></div>
+
+  <div class="stopwatch-container">
+    <h1>Stopwatch</h1>
+    <div class="timer" id="display">00:00:00</div>
+    <div class="controls">
+      <button onclick="startStopwatch()">Start</button>
+      <button onclick="pauseStopwatch()">Pause</button>
+      <button onclick="resetStopwatch()">Reset</button>
+      <button onclick="recordLap()">Lap</button>
+    </div>
+    <ul class="laps" id="laps"></ul>
+  </div>
+
+  <script>
+    let startTime = 0;
+    let elapsedTime = 0;
+    let timerInterval;
+    const display = document.getElementById('display');
+    const laps = document.getElementById('laps');
+
+    function formatTime(ms) {
+      let date = new Date(ms);
+      let mins = String(date.getUTCMinutes()).padStart(2, '0');
+      let secs = String(date.getUTCSeconds()).padStart(2, '0');
+      let msPart = String(Math.floor(date.getUTCMilliseconds() / 10)).padStart(2, '0');
+      return `${mins}:${secs}:${msPart}`;
+    }
+
+    function startStopwatch() {
+      if (!timerInterval) {
+        startTime = Date.now() - elapsedTime;
+        timerInterval = setInterval(() => {
+          elapsedTime = Date.now() - startTime;
+          display.textContent = formatTime(elapsedTime);
+        }, 10);
+      }
+    }
+
+    function pauseStopwatch() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    function resetStopwatch() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      elapsedTime = 0;
+      display.textContent = "00:00:00";
+      laps.innerHTML = '';
+    }
+
+    function recordLap() {
+      if (elapsedTime > 0) {
+        const li = document.createElement('li');
+        li.textContent = formatTime(elapsedTime);
+        laps.appendChild(li);
+      }
+    }
+  </script>
+
+</body>
+</html>
